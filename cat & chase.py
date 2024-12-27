@@ -300,7 +300,7 @@ def display():
     cross()
     draw_cat(cat_x, cat_y)
     draw_bait()
-    glColor3f(1.0, 1.0, 1.0)
+    glColor3f(0.0, 0.0, 0.0)
     draw_text(10, 480, f"Score: {score}")
     glutSwapBuffers()
 
