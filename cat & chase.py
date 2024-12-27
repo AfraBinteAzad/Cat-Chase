@@ -11,7 +11,7 @@ window_height=500
 bait_lifetime=5
 cat_speed=10
 circles=[]
-speed=2
+speed=5
 cat_x=200
 cat_y=0
 score=0
@@ -157,20 +157,20 @@ def draw_symmetric_points(x_center, y_center, x, y):
 
 def add_fish():
     x = random.randint(50, window_width - 50)
-    y = random.randint(50, window_height - 50)
+    y = random.randint(50, window_height - 90)
     timestamp = time.time()
     fish_bait.append({'x': x, 'y': y, 'timestamp': timestamp})
 
 
 def add_mouse():
     x = random.randint(50, window_width - 50)
-    y = random.randint(50, window_height - 70)
+    y = random.randint(50, window_height - 90)
     timestamp = time.time()
     mouse_bait.append({'x': x, 'y': y, 'timestamp': timestamp})
 
 def add_scorpio():
     x = random.randint(50, window_width - 50)
-    y = random.randint(50, window_height - 50)
+    y = random.randint(50, window_height - 90)
     timestamp = time.time()
     scorpio_bait.append({'x': x, 'y': y, 'timestamp': timestamp})
 class AABB:
@@ -214,73 +214,69 @@ pause_AABB = AABB(260, 430, 20, 40)
 leftArrow_AABB = AABB(10, 430, 50, 40)
 
 def draw_cat(x, y):
-    glColor3f(0.7, 0.4, 0.2)
-    draw_line(x, y, x + 60, y)
-    draw_line(x, y, x, y + 70)
-    draw_line(x + 60, y, x + 60, y + 70)
-    draw_line(x, y + 70, x + 60, y + 70)
+    c = (0.7, 0.4, 0.2)
+    draw_rectangle(x, y, x + 60, y + 70, c)
+    draw_rectangle(x+5,y+70,x+55,y+110,c)
 
-    glColor3f(0.7, 0.4, 0.2)
-    draw_line(x+5,y+70,x+55,y+70)
-    draw_line(x+5,y+110, x+55, y+ 110)
-    draw_line(x+5,y+70, x+5,y+110)
-    draw_line(x+55,y+70, x+55, y+ 110)
+    c=(0.9, 0.6, 0.4)
+    draw_rectangle(x+10,y,x+50,y+60,c)
 
+    c=(0.4, 0.1, 0.05)
+    draw_rectangle(x+10,y+110,x+25,y+130,c)
+    draw_rectangle(x+35,y+110,x+50,y+130,c)
+
+
+    glColor3f(0.4, 0.1, 0.05)
+    r=0
+    while r<=2:
+        draw_circle_midpoint(x+30,y+90,r)
+        r=r+.5
     glColor3f(0.5, 0.2, 0.1)
-    draw_line(x+10,y+110, x+30,y+110)
-    draw_line(x + 10, y + 110, x + 20, y + 130)
-    draw_line(x+30,y+110, x + 20, y + 130)
+    draw_line(x + 28, y + 90, x + 10, y + 100)
+    draw_line(x + 28, y + 90, x + 10, y + 80)
+    draw_line(x + 32, y + 90, x + 50, y + 100)
+    draw_line(x + 32, y + 90, x + 50, y + 80)
 
-    glColor3f(0.5, 0.2, 0.1)
-    draw_line(x+50, y+ 110, x+30, y+ 110)
-    draw_line(x+50, y+ 110, x + 40, y + 130)
-    draw_line(x+30, y+ 110, x + 40, y + 130)
 
-    glColor3f(0.5, 0.2, 0.1)
-    draw_circle_midpoint(x+30,y+90,2)
 
-    glColor3f(0.5, 0.2, 0.1)
-    draw_line(x+28,y+90,x+10,y+100)
-    draw_line(x+28,y+90,x+10,y+80)
-    draw_line(x+32,y+90,x+50,y+100)
-    draw_line(x+32,y+90,x+50,y+80)
-
-def draw_fish():
-    global fish_bait
+def draw_bait():
+    global fish_bait, mouse_bait, scorpio_bait
     current_time = time.time()
     bait = [m for m in fish_bait if current_time - m['timestamp'] < bait_lifetime]
     for m in bait:
-        glColor3f(0.3, 0.5, 1.0)
+        glColor3f(1.0, 1.0, 0.0)
         x, y = m['x'], m['y']
-        draw_circle_midpoint(x,y, 5)
-        draw_line(x+5,y,x+10,y+10)
-        draw_line(x+5,y,x+10,y-10)
+        r = 0
+        while r <= 10:
+            draw_circle_midpoint(x, y, r)
+            r = r + 1
+        draw_line(x + 10, y, x + 20, y + 15)
+        draw_line(x + 10, y, x + 20, y - 15)
+        draw_line(x + 20, y - 10, x + 20, y + 10)
 
-def draw_mouse():
-    global mouse_bait
     current_time = time.time()
     bait = [m for m in mouse_bait if current_time - m['timestamp'] < bait_lifetime]
 
     for m in bait:
-        glColor3f(0.25, 0.25, 0.25)
         x, y = m['x'], m['y']
-        draw_circle_midpoint(x,y, 2.5)
-        draw_line(x+2.5,y,x+25,y+10)
-        draw_line(x+2.5,y,x+25,y)
-        draw_line(x+25,y,x+25,y+10)
+        c=(0.6, 0.6, 0.6)
+        draw_rectangle(x,y-10,x+25,y+10,c)
+        c=(0.0, 0.0, 0.0)
+        draw_rectangle(x,y+10,x+2.5,y+15,c)
+        draw_rectangle(x+6,y+10,x+8.5,y+15,c)
+        glColor3f(0.0, 0.0, 0.0)
+        draw_circle_midpoint(x+2,y,1.5)
 
-def draw_scorpio():
-    global scorpio_bait
     current_time = time.time()
     bait = [m for m in scorpio_bait if current_time - m['timestamp'] < bait_lifetime]
 
     for m in bait:
-        glColor3f(1.0, 0.0, 0.0)
+        c=(1.0, 0.0, 0.0)
         x, y = m['x'], m['y']
-        draw_circle_midpoint(x,y, 3)
-        draw_circle_midpoint(x + 5, y, 4)
-        draw_circle_midpoint(x + 10, y, 5)
-        draw_circle_midpoint(x + 15, y, 6)
+        draw_rectangle(x,y-3,x+3,y+3,c)
+        draw_rectangle(x+3,y-5,x+6,y+5,c)
+        draw_rectangle(x+6,y-7,x+9,y+7,c)
+        draw_rectangle(x+9,y-9,x+12,y+9,c)
 
 
 def draw_text(x, y, text):
@@ -303,9 +299,7 @@ def display():
         pause()
     cross()
     draw_cat(cat_x, cat_y)
-    draw_fish()
-    draw_mouse()
-    draw_scorpio()
+    draw_bait()
     glColor3f(1.0, 1.0, 1.0)
     draw_text(10, 480, f"Score: {score}")
     glutSwapBuffers()
@@ -356,7 +350,7 @@ def keyboard(key, x, y):
     elif key == b'd':
         cat_y = max(0,cat_y-cat_speed)
     elif key == b'u':
-        cat_y = min(window_height-70,cat_y+cat_speed)
+        cat_y = min(window_height-200,cat_y+cat_speed)
     glutPostRedisplay()
 
 
@@ -388,16 +382,29 @@ def mouse_click(button, state, x, y):
 
     glutPostRedisplay()
 
+bg_r, bg_g, bg_b = 0.5, 0.7, 1.0
+bg_speed = 0.0001
 def animation():
-    global play_mode
+    global play_mode,bg_r, bg_g, bg_b
+    bg_r = 0.5 + 0.5 * math.sin(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
+    bg_g = 0.7 + 0.3 * math.sin(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
+    bg_b = 1.0 + 0.3 * math.cos(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
+
+    glClearColor(bg_r, bg_g, bg_b, 1.0)
     if play_mode == True:
         glutPostRedisplay()
+
+
+def draw_rectangle(x1, y1, x2, y2, color):
+    glColor3f(*color)
+    for y in range(int(y1), int(y2)):
+        draw_line(x1, y, x2, y)
 
 
 glutInit()
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
 glutInitWindowSize(window_width, window_height)
-glutCreateWindow(b"Shooting Game")
+glutCreateWindow(b"Cat & Chase")
 glutDisplayFunc(display)
 glutIdleFunc(animation)
 glutKeyboardFunc(keyboard)
