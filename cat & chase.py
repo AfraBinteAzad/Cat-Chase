@@ -397,13 +397,13 @@ def mouse_click(button, state, x, y):
 
     glutPostRedisplay()
 
-bg_r, bg_g, bg_b = 0.5, 0.7, 1.0
+bg_r, bg_g, bg_b = 0.5, 0.5, 0.5
 bg_speed = 0.0001
 def animation():
     global play_mode,bg_r, bg_g, bg_b
     bg_r = 0.5 + 0.5 * math.sin(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
-    bg_g = 0.7 + 0.3 * math.sin(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
-    bg_b = 1.0 + 0.3 * math.cos(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
+    bg_g = 0.5 + 0.5 * math.sin(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
+    bg_b = 0.5 + 0.5 * math.cos(glutGet(GLUT_ELAPSED_TIME) * bg_speed)
 
     glClearColor(bg_r, bg_g, bg_b, 1.0)
     if play_mode == True:
