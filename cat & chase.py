@@ -4,8 +4,14 @@ from OpenGL.GLU import *
 import random
 import time
 import math
+import threading
+from playsound import playsound
 
+def play_background_music():
+    playsound(r"C:\Users\User\Downloads\BackgroundMusic.mp3", block=False)
 
+music_thread = threading.Thread(target=play_background_music)
+music_thread.start()
 window_width=500
 window_height=500
 bait_lifetime=5
@@ -173,6 +179,7 @@ def add_scorpio():
     y = random.randint(50, window_height - 90)
     timestamp = time.time()
     scorpio_bait.append({'x': x, 'y': y, 'timestamp': timestamp})
+
 class AABB:
     def __init__(self, x, y, width, height):
         self.x = x
@@ -238,45 +245,45 @@ def draw_cat(x, y):
     draw_line(x + 32, y + 90, x + 50, y + 80)
 
 
-
 def draw_bait():
-    global fish_bait, mouse_bait, scorpio_bait
-    current_time = time.time()
-    bait = [m for m in fish_bait if current_time - m['timestamp'] < bait_lifetime]
-    for m in bait:
-        glColor3f(1.0, 1.0, 0.0)
-        x, y = m['x'], m['y']
-        r = 0
-        while r <= 10:
-            draw_circle_midpoint(x, y, r)
-            r = r + 1
-        draw_line(x + 10, y, x + 20, y + 15)
-        draw_line(x + 10, y, x + 20, y - 15)
-        draw_line(x + 20, y - 10, x + 20, y + 10)
+    global fish_bait, mouse_bait, scorpio_bait,play_mode
+    if play_mode:
+        current_time = time.time()
+        bait = [m for m in fish_bait if current_time - m['timestamp'] < bait_lifetime]
+        for m in bait:
+            glColor3f(1.0, 1.0, 0.0)
+            x, y = m['x'], m['y']
+            r = 0
+            while r <= 10:
+                draw_circle_midpoint(x, y, r)
+                r = r + 1
+            draw_line(x + 10, y, x + 20, y + 15)
+            draw_line(x + 10, y, x + 20, y - 15)
+            draw_line(x + 20, y - 10, x + 20, y + 10)
 
-    current_time = time.time()
-    bait = [m for m in mouse_bait if current_time - m['timestamp'] < bait_lifetime]
+        current_time = time.time()
+        bait = [m for m in mouse_bait if current_time - m['timestamp'] < bait_lifetime]
 
-    for m in bait:
-        x, y = m['x'], m['y']
-        c=(0.6, 0.6, 0.6)
-        draw_rectangle(x,y-10,x+25,y+10,c)
-        c=(0.0, 0.0, 0.0)
-        draw_rectangle(x,y+10,x+2.5,y+15,c)
-        draw_rectangle(x+6,y+10,x+8.5,y+15,c)
-        glColor3f(0.0, 0.0, 0.0)
-        draw_circle_midpoint(x+2,y,1.5)
+        for m in bait:
+            x, y = m['x'], m['y']
+            c = (0.6, 0.6, 0.6)
+            draw_rectangle(x, y - 10, x + 25, y + 10, c)
+            c = (0.0, 0.0, 0.0)
+            draw_rectangle(x, y + 10, x + 2.5, y + 15, c)
+            draw_rectangle(x + 6, y + 10, x + 8.5, y + 15, c)
+            glColor3f(0.0, 0.0, 0.0)
+            draw_circle_midpoint(x + 2, y, 1.5)
 
-    current_time = time.time()
-    bait = [m for m in scorpio_bait if current_time - m['timestamp'] < bait_lifetime]
+        current_time = time.time()
+        bait = [m for m in scorpio_bait if current_time - m['timestamp'] < bait_lifetime]
 
-    for m in bait:
-        c=(1.0, 0.0, 0.0)
-        x, y = m['x'], m['y']
-        draw_rectangle(x,y-3,x+3,y+3,c)
-        draw_rectangle(x+3,y-5,x+6,y+5,c)
-        draw_rectangle(x+6,y-7,x+9,y+7,c)
-        draw_rectangle(x+9,y-9,x+12,y+9,c)
+        for m in bait:
+            c = (1.0, 0.0, 0.0)
+            x, y = m['x'], m['y']
+            draw_rectangle(x, y - 3, x + 3, y + 3, c)
+            draw_rectangle(x + 3, y - 5, x + 6, y + 5, c)
+            draw_rectangle(x + 6, y - 7, x + 9, y + 7, c)
+            draw_rectangle(x + 9, y - 9, x + 12, y + 9, c)
 
 
 def draw_text(x, y, text):
@@ -313,30 +320,40 @@ def check_collision(cat_x, cat_y, bait_x, bait_y):
     distance = math.sqrt((cat_center_x - bait_x) ** 2 + (cat_center_y - bait_y) ** 2)
     return distance <= cat_radius + bait_radius
 
+catch_count = 0
+game_over = False
+
 def update_score():
-    global score
-    for fish in fish_bait[:]:
-        if check_collision(cat_x, cat_y, fish['x'], fish['y']):
-            score=score+10
-            fish_bait.remove(fish)
+    global score,play_mode,catch_count, game_over
+    if play_mode:
+        for fish in fish_bait[:]:
+            if check_collision(cat_x, cat_y, fish['x'], fish['y']):
+                score = score + 10
+                fish_bait.remove(fish)
 
-    for mouse in mouse_bait[:]:
-        if check_collision(cat_x, cat_y, mouse['x'], mouse['y']):
-            score=score+10
-            mouse_bait.remove(mouse)
+        for mouse in mouse_bait[:]:
+            if check_collision(cat_x, cat_y, mouse['x'], mouse['y']):
+                score = score + 10
+                mouse_bait.remove(mouse)
+
+        for scorpio in scorpio_bait[:]:
+            if check_collision(cat_x, cat_y, scorpio['x'], scorpio['y']):
+                score=score-10
+                scorpio_bait.remove(scorpio)
+                game_over = True
+                play_mode = False
+                print("Game Over! The cat caught the scorpio.")
 
 
-    for scorpio in scorpio_bait[:]:
-        if check_collision(cat_x, cat_y, scorpio['x'], scorpio['y']):
-            score=score-10
-            scorpio_bait.remove(scorpio)
 def update(value):
-    if random.random() < 0.33:
-        add_fish()
-    if random.random() < 0.33:
-        add_mouse()
-    if random.random() < 0.33:
-        add_scorpio()
+    global play_mode
+    if play_mode:
+        if random.random() < 0.33:
+            add_fish()
+        if random.random() < 0.33:
+            add_mouse()
+        if random.random() < 0.33:
+            add_scorpio()
     update_score()
     glutPostRedisplay()
     glutTimerFunc(1000, update, 0)
@@ -366,9 +383,7 @@ def restart_game():
 
 def mouse_click(button, state, x, y):
     global play_mode
-
     mx, my = x, window_height - y
-
     if (button == GLUT_LEFT_BUTTON and state == GLUT_DOWN) or (button == GLUT_RIGHT_BUTTON and state == GLUT_DOWN):
 
         if cross_AABB.collides_with(AABB(mx, my, 1, 1)):
