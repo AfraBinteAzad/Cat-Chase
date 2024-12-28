@@ -320,7 +320,7 @@ def check_collision(cat_x, cat_y, bait_x, bait_y):
     distance = math.sqrt((cat_center_x - bait_x) ** 2 + (cat_center_y - bait_y) ** 2)
     return distance <= cat_radius + bait_radius
 
-catch_count = 0
+
 game_over = False
 
 def update_score():
